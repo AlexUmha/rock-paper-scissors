@@ -1,62 +1,151 @@
-let randNum = 0;
-let compRock = "Computer chose rock. ";
-let compScis = "Computer chose scissors. ";
-let compPaper = "Computer chose paper. ";
-let compTie = "It's a tie.";
-let compLose = "You lose, haha! What a loser!";
-let compWin = "You win. Good for you!";
-let humanScore = 0;
-let compScore = 0;
+const container = document.querySelector(".container");
+const buttonRock = document.createElement("button");
+const buttonPaper = document.createElement("button");
+const buttonScissors = document.createElement("button");
+const display = document.createElement("div");
+const displayText = document.createElement("h3");
+const displayScore = document.createElement("h1");
+const displayWinner = document.createElement("h2");
+const buttonRestart = document.createElement("button");
+const buttonPlay = document.createElement("button");
+const buttons = document.createElement("div");
+const totalScore = document.createElement("h2");
 
-function rpsGame(input) {
-    console.log("You chose " + input)
-    if (input === "rock") {
-        if (randNum === 0) {
-            console.log(compRock + compTie)
-        } else if (randNum === 1) {
-            console.log(compPaper + compLose)
-            compScore++;
-        } else {
-            console.log(compScis + compWin)
-            humanScore++;
-        }
-    } else if (input === "paper") {
-        if (randNum === 0) {
-            console.log (compRock + compWin)
-            humanScore++;
-        } else if (randNum === 1) {
-            console.log (compPaper + compTie)
-        } else {
-            console.log (compScis + compLose)
-            compScore++;
-        }
-    } else if (input === "scissors") {
-        if (randNum === 0) {
-            console.log (compRock + compLose)
-            compScore++;
-        } else if (randNum === 1) {
-            console.log (compPaper + compWin)
-            humanScore++;
-        } else {
-            console.log (compScis + compTie)
-        }
+container.appendChild(buttonPlay);
+container.appendChild(totalScore);
+container.appendChild(display);
+display.appendChild(buttons);
+display.appendChild(displayScore);
+display.appendChild(displayText);
+display.appendChild(displayWinner);
+
+let humanScore = 0;
+let computerScore = 0;
+let totalWins = 0;
+let totalLose = 0;
+let totalGames = 0;
+
+buttonPlay.textContent = "New Game";
+buttonRock.textContent = "Rock";
+buttonPaper.textContent = "Paper";
+buttonScissors.textContent = "Scissors";
+buttonRestart.textContent = "Play Again";
+
+displayText.setAttribute('style', 'white-space: pre;')
+buttonPlay.setAttribute('style', 'margin-bottom: 8px;')
+
+function getComputerChoice() {
+    let computerChoice = Math.floor(Math.random()*3)
+    if (computerChoice === 0) {
+        return "rock"
+    }   else if (computerChoice === 1) {
+        return "paper"
     } else {
-        console.log ("There are three choices, dingus, just choose one. Since you wanna be dumb, you can lose this round.");
-        compScore++;
+        return "scissors"
     }
 }
-for (let i = 0; i < 5; i++) {
-    randNum = Math.floor(Math.random()*3);
-    let input = prompt("Rock, Paper, or Scissors?").toLowerCase();
-    rpsGame(input);
-    if (i === 4){
-        console.log(`Final results: Your Score: ${humanScore}. | Bot score: ${compScore}.`)
-        if (humanScore > compScore) {
-            console.log("Wow, you did it! You are the ultimate winner.")
-        } else if (humanScore < compScore) {
-            console.log("Haha, you're a loser! Look everybody, point and laugh at the loser!")
-        } else {
-            console.log("wow, a tie, how boring.")
+
+function playGame(humanChoice) {
+
+    function playRound(computerChoice) {
+        computerChoice = getComputerChoice();
+        switch (true) {
+            case (humanChoice == "rock" && computerChoice == "rock"):
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. Tie.\r\n`)
+                break;
+            case (humanChoice == "rock" && computerChoice == "paper"):
+                computerScore++;
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. You lose.\r\n`)
+                break;
+            case (humanChoice == "rock" && computerChoice == "scissors"):
+                humanScore++;
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. You win.\r\n`)
+                break;
+            case (humanChoice == "paper" && computerChoice == "rock"):
+                humanScore++;
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. You win.\r\n`)
+                break;
+            case (humanChoice == "paper" && computerChoice == "paper"):
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. Tie.\r\n`)
+                break;
+            case (humanChoice == "paper" && computerChoice == "scissors"):
+                computerScore++;
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. You lose.\r\n`)
+                break;
+            case (humanChoice == "scissors" && computerChoice == "rock"):
+                computerScore++;
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. You lose.\r\n`)
+                break;
+            case (humanChoice == "scissors" && computerChoice == "paper"):
+                humanScore++;
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. You win.\r\n`)
+                break;
+            case (humanChoice == "scissors" && computerChoice == "scissors"):
+                displayText.textContent += (`You picked ${humanChoice}. CPU picked ${computerChoice}. Tie.\r\n`)
+                break;
+            default:
+                computerScore++
+                displayText.textContent += (`Invalid input. CPU gets automatic point increment.\r\n`);
+        }
+        displayScore.textContent = `You have ${humanScore} points. CPU has ${computerScore} points.`
+        if (humanScore >= 5) {
+            displayWinner.textContent = "You win!"
+            totalWins++;
+            totalGames++;
+            totalScore.textContent = `You have played ${totalGames} total games. You have won ${totalWins} times and the CPU has won ${totalLose} times.`
+            buttons.removeChild(buttonRock);
+            buttons.removeChild(buttonPaper);
+            buttons.removeChild(buttonScissors);
+            display.appendChild(buttonRestart).focus();
+        } else if (computerScore >= 5) {
+            displayWinner.textContent = "You lose."
+            totalLose++;
+            totalGames++;
+            totalScore.textContent = `You have played ${totalGames} total games. You have won ${totalWins} times and the CPU has won ${totalLose} times.`
+            buttons.removeChild(buttonRock);
+            buttons.removeChild(buttonPaper);
+            buttons.removeChild(buttonScissors);
+            display.appendChild(buttonRestart).focus();
         }
     }
+    playRound();
 }
+
+buttonPlay.addEventListener("click", () => {
+    totalWins = 0;
+    totalLose = 0;
+    totalGames = 0;
+    totalScore.textContent = `You have played ${totalGames} total games. You have won ${totalWins} times and the CPU has won ${totalLose} times.`
+    buttons.appendChild (buttonRock);
+    buttons.appendChild (buttonPaper);
+    buttons.appendChild (buttonScissors);
+    displayText.textContent = "";
+    displayScore.textContent = "";
+    displayWinner.textContent = "";
+    humanScore = 0; computerScore = 0;
+    if (display.contains(buttonRestart)) {
+        display.removeChild(buttonRestart);
+    }
+})
+buttonRock.addEventListener("click", () => {
+    const humanChoice = "rock"
+    return playGame(humanChoice)
+})
+buttonPaper.addEventListener("click", () => {
+    const humanChoice = "paper"
+    return playGame(humanChoice)
+})
+buttonScissors.addEventListener("click", () => {
+    const humanChoice = "scissors"
+    return playGame(humanChoice)
+})
+buttonRestart.addEventListener("click", () => {
+    displayText.textContent = "";
+    displayWinner.textContent = "";
+    buttons.appendChild (buttonRock);
+    buttons.appendChild (buttonPaper);
+    buttons.appendChild (buttonScissors);
+    humanScore = 0; computerScore = 0;
+    displayScore.textContent = `You have ${humanScore} points. CPU has ${computerScore} points.`;
+    display.removeChild(buttonRestart)
+})
